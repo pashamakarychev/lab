@@ -1,0 +1,10 @@
+/* Color styles.
+ * Names are converted to kebab-case for CSS.
+ */
+:root {
+  --white: #ffffff;
+  --gray-100: #f0f2f4;
+  --gray-200: #7d7c80;
+  --black: #1d1d1e;
+  --blue: #dcebff;
+}
