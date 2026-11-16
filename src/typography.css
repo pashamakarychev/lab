@@ -1,3 +1,11 @@
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/inter-regular.ttf') format('truetype');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
 /* Figma text style: Body / Small.
  * Apply explicitly to the component that uses it.
  * Add future Figma text styles as separate classes here.
