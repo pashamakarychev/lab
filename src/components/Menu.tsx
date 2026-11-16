@@ -1,5 +1,6 @@
 import { useEffect, useId, useLayoutEffect, useRef, useState, type KeyboardEvent, type MouseEvent } from 'react'
 import { MenuItem, type MenuItemProps } from './MenuItem'
+import { useSafeTriangle } from './useSafeTriangle'
 
 export type MenuEntry = Omit<MenuItemProps, 'role' | 'tabIndex' | 'hasSubmenu'> & {
   id: string
@@ -27,6 +28,22 @@ function MenuPanel({ items, 'aria-label': label, className = '', anchor, focusOn
   const buttonsRef = useRef(new Map<string, HTMLButtonElement>())
   const submenuPrefix = useId()
   const firstEnabled = items.findIndex((item) => !item.disabled)
+  const safeTriangle = useSafeTriangle({
+    activeId: openId,
+    onEnter: (itemId) => {
+      const item = items.find((item) => item.id === itemId)
+      setFocusSubmenu(false)
+      setOpenId(item && !item.disabled && item.items?.length ? itemId : null)
+    },
+    onLeave: (itemId) => {
+      const trigger = buttonsRef.current.get(itemId)
+      const entry = trigger?.parentElement
+      if (entry?.contains(document.activeElement) && document.activeElement !== trigger) {
+        trigger?.focus()
+      }
+      setOpenId((current) => current === itemId ? null : current)
+    },
+  })
 
   function getEnabledButtons() {
     return items.flatMap(({ id }) => {
@@ -67,11 +84,13 @@ function MenuPanel({ items, 'aria-label': label, className = '', anchor, focusOn
   }, [anchor])
 
   function closeSubmenu(restoreFocus = false) {
+    safeTriangle.cancel()
     if (restoreFocus && openId) buttonsRef.current.get(openId)?.focus()
     setOpenId(null)
   }
 
   function openSubmenu(itemId: string) {
+    safeTriangle.cancel()
     setFocusSubmenu(true)
     setOpenId(itemId)
   }
@@ -136,18 +155,15 @@ function MenuPanel({ items, 'aria-label': label, className = '', anchor, focusOn
         const isOpen = openId === itemId && hasSubmenu
         const submenuId = `${submenuPrefix}-${itemId}`
         return (
-          <div className="menu__entry" role="none" key={itemId} onMouseEnter={() => {
-            setFocusSubmenu(false)
-            setOpenId(item.disabled || !hasSubmenu ? null : itemId)
-          }} onMouseLeave={(event) => {
-            if (!hasSubmenu) return
-            const entry = event.currentTarget
-            const trigger = buttonsRef.current.get(itemId)
-            if (entry.contains(document.activeElement) && document.activeElement !== trigger) {
-              trigger?.focus()
-            }
-            setOpenId((current) => current === itemId ? null : current)
-          }}>
+          <div
+            className="menu__entry"
+            role="none"
+            key={itemId}
+            onMouseEnter={() => safeTriangle.handleMouseEnter(itemId)}
+            onMouseLeave={(event) => safeTriangle.handleMouseLeave(
+              event, itemId, event.currentTarget.querySelector<HTMLElement>('[role="menu"]'),
+            )}
+          >
             <MenuItem
               {...item}
               ref={(button) => {
