@@ -151,7 +151,6 @@ function MenuPanel({ items, 'aria-label': label, className = '', anchor, focusOn
         if (!event.currentTarget.contains(event.relatedTarget as Node)) closeSubmenu()
       }}
     >
-      <SafeTriangleDebug triangle={safeTriangle.triangle} />
       {items.map((entry, index) => {
         const { id: itemId, items: children, ...item } = entry
         const hasSubmenu = Boolean(children?.length)
@@ -193,6 +192,11 @@ function MenuPanel({ items, 'aria-label': label, className = '', anchor, focusOn
               focusOnOpen={focusSubmenu}
               onClose={() => closeSubmenu(true)}
               onCloseAncestors={() => { closeSubmenu(true); onCloseAncestors?.() }}
+            />}
+            {isOpen && <SafeTriangleDebug
+              triangle={safeTriangle.triangle}
+              anchor={buttonsRef.current.get(itemId)}
+              submenuId={submenuId}
             />}
           </div>
         )
