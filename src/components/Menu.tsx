@@ -144,6 +144,7 @@ function MenuPanel({ items, 'aria-label': label, className = '', anchor, focusOn
       id={id}
       role="menu"
       aria-label={label}
+      data-safe-triangle-active={safeTriangle.triangle ? '' : undefined}
       className={`menu ${anchor ? 'menu--submenu' : ''} ${className}`.trim()}
       onKeyDown={handleKeyDown}
       onBlur={(event) => {

@@ -33,6 +33,10 @@
   background: var(--gray-100);
 }
 
+.menu[data-safe-triangle-active] > .menu__entry > .menu-item:hover:not(:disabled):not([aria-expanded='true']) {
+  background: var(--white);
+}
+
 .menu-item:focus-visible {
   position: relative;
   z-index: 1;
