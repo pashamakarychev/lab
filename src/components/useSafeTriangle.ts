@@ -1,6 +1,12 @@
-import { useCallback, useEffect, useRef, type MouseEvent } from 'react'
+import { useCallback, useEffect, useRef, useState, type MouseEvent } from 'react'
 
 type Point = { x: number; y: number }
+
+export type SafeTriangleGeometry = {
+  origin: Point
+  top: Point
+  bottom: Point
+}
 
 function isInTriangle(point: Point, a: Point, b: Point, c: Point) {
   const cross = (p: Point, q: Point, r: Point) =>
@@ -17,6 +23,7 @@ type SafeTriangleOptions = {
 }
 
 export function useSafeTriangle({ activeId, onEnter, onLeave }: SafeTriangleOptions) {
+  const [triangle, setTriangle] = useState<SafeTriangleGeometry | null>(null)
   const trackingRef = useRef<{
     id: string
     pendingId: string | null
@@ -26,6 +33,7 @@ export function useSafeTriangle({ activeId, onEnter, onLeave }: SafeTriangleOpti
   const cancel = useCallback(() => {
     trackingRef.current?.stop()
     trackingRef.current = null
+    setTriangle(null)
   }, [])
 
   useEffect(() => cancel, [activeId, cancel])
@@ -94,7 +102,8 @@ export function useSafeTriangle({ activeId, onEnter, onLeave }: SafeTriangleOpti
       pendingId: null,
       stop: () => controller.abort(),
     }
+    setTriangle({ origin, top, bottom })
   }
 
-  return { handleMouseEnter, handleMouseLeave, cancel }
+  return { handleMouseEnter, handleMouseLeave, cancel, triangle }
 }

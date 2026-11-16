@@ -1,5 +1,6 @@
 import { useEffect, useId, useLayoutEffect, useRef, useState, type KeyboardEvent, type MouseEvent } from 'react'
 import { MenuItem, type MenuItemProps } from './MenuItem'
+import { SafeTriangleDebug } from './SafeTriangleDebug'
 import { useSafeTriangle } from './useSafeTriangle'
 
 export type MenuEntry = Omit<MenuItemProps, 'role' | 'tabIndex' | 'hasSubmenu'> & {
@@ -149,6 +150,7 @@ function MenuPanel({ items, 'aria-label': label, className = '', anchor, focusOn
         if (!event.currentTarget.contains(event.relatedTarget as Node)) closeSubmenu()
       }}
     >
+      <SafeTriangleDebug triangle={safeTriangle.triangle} />
       {items.map((entry, index) => {
         const { id: itemId, items: children, ...item } = entry
         const hasSubmenu = Boolean(children?.length)
