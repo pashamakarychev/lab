@@ -28,7 +28,7 @@ const items: MenuEntry[] = [
 function App() {
   return (
     <main className="playground">
-      <Menu aria-label="Main menu" items={items} />
+      <Menu aria-label="Main menu" items={items} safeTriangleEnabled showSafeTriangle />
     </main>
   )
 }

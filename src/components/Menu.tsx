@@ -12,6 +12,8 @@ export type MenuProps = {
   items: readonly MenuEntry[]
   'aria-label': string
   className?: string
+  safeTriangleEnabled?: boolean
+  showSafeTriangle?: boolean
 }
 
 type MenuPanelProps = MenuProps & {
@@ -22,7 +24,10 @@ type MenuPanelProps = MenuProps & {
   id?: string
 }
 
-function MenuPanel({ items, 'aria-label': label, className = '', anchor, focusOnOpen, onClose, onCloseAncestors, id }: MenuPanelProps) {
+function MenuPanel({
+  items, 'aria-label': label, className = '', safeTriangleEnabled = true, showSafeTriangle = false,
+  anchor, focusOnOpen, onClose, onCloseAncestors, id,
+}: MenuPanelProps) {
   const menuRef = useRef<HTMLDivElement>(null)
   const [openId, setOpenId] = useState<string | null>(null)
   const [focusSubmenu, setFocusSubmenu] = useState(false)
@@ -30,6 +35,7 @@ function MenuPanel({ items, 'aria-label': label, className = '', anchor, focusOn
   const submenuPrefix = useId()
   const firstEnabled = items.findIndex((item) => !item.disabled)
   const safeTriangle = useSafeTriangle({
+    enabled: safeTriangleEnabled,
     activeId: openId,
     onEnter: (itemId) => {
       const item = items.find((item) => item.id === itemId)
@@ -188,12 +194,14 @@ function MenuPanel({ items, 'aria-label': label, className = '', anchor, focusOn
               id={submenuId}
               items={children}
               aria-label={`${item.label ?? itemId} submenu`}
+              safeTriangleEnabled={safeTriangleEnabled}
+              showSafeTriangle={showSafeTriangle}
               anchor={buttonsRef.current.get(itemId)}
               focusOnOpen={focusSubmenu}
               onClose={() => closeSubmenu(true)}
               onCloseAncestors={() => { closeSubmenu(true); onCloseAncestors?.() }}
             />}
-            {isOpen && <SafeTriangleDebug
+            {isOpen && showSafeTriangle && <SafeTriangleDebug
               triangle={safeTriangle.triangle}
               anchor={buttonsRef.current.get(itemId)}
               submenuId={submenuId}

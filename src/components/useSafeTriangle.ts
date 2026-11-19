@@ -17,12 +17,13 @@ function isInTriangle(point: Point, a: Point, b: Point, c: Point) {
 }
 
 type SafeTriangleOptions = {
+  enabled: boolean
   activeId: string | null
   onEnter: (id: string) => void
   onLeave: (id: string) => void
 }
 
-export function useSafeTriangle({ activeId, onEnter, onLeave }: SafeTriangleOptions) {
+export function useSafeTriangle({ enabled, activeId, onEnter, onLeave }: SafeTriangleOptions) {
   const [triangle, setTriangle] = useState<SafeTriangleGeometry | null>(null)
   const trackingRef = useRef<{
     id: string
@@ -36,11 +37,11 @@ export function useSafeTriangle({ activeId, onEnter, onLeave }: SafeTriangleOpti
     setTriangle(null)
   }, [])
 
-  useEffect(() => cancel, [activeId, cancel])
+  useEffect(() => cancel, [enabled, activeId, cancel])
 
   function handleMouseEnter(id: string) {
     const tracking = trackingRef.current
-    if (tracking && tracking.id !== id) {
+    if (enabled && tracking && tracking.id !== id) {
       tracking.pendingId = id
       return
     }
@@ -50,12 +51,12 @@ export function useSafeTriangle({ activeId, onEnter, onLeave }: SafeTriangleOpti
 
   function handleMouseLeave(event: MouseEvent<HTMLElement>, id: string, submenu: HTMLElement | null) {
     const tracking = trackingRef.current
-    if (tracking && tracking.id !== id) {
+    if (enabled && tracking && tracking.id !== id) {
       if (tracking.pendingId === id) tracking.pendingId = null
       return
     }
     cancel()
-    if (id !== activeId || !submenu) {
+    if (!enabled || id !== activeId || !submenu) {
       onLeave(id)
       return
     }
@@ -105,5 +106,5 @@ export function useSafeTriangle({ activeId, onEnter, onLeave }: SafeTriangleOpti
     setTriangle({ origin, top, bottom })
   }
 
-  return { handleMouseEnter, handleMouseLeave, cancel, triangle }
+  return { handleMouseEnter, handleMouseLeave, cancel, triangle: enabled ? triangle : null }
 }
