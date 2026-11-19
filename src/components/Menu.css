@@ -7,7 +7,7 @@
   border: 1px solid var(--gray-100);
   border-radius: 8px;
   background: var(--white);
-  box-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  box-shadow: 0 2px 4px -2px var(--shadow-color), 0 4px 6px -1px var(--shadow-color);
 }
 
 .menu-item {
@@ -69,7 +69,7 @@
   overflow-y: auto;
 }
 
-.menu-item[aria-expanded='true'] { background: var(--gray-100); }
+.menu-item[aria-expanded='true']:not(:focus-visible):not(:disabled) { background: var(--gray-100); }
 
 .menu-item__icon {
   display: flex;

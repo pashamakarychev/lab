@@ -3,8 +3,8 @@
 
 :root {
   font-family: system-ui, sans-serif;
-  color: #111;
-  background-color: var(--gray-100);
+  color: var(--black);
+  background-color: var(--canvas-background);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;

@@ -5,10 +5,10 @@
   height: 100%;
   z-index: 1000;
   pointer-events: none;
-  fill: hsl(from #dcebff h s 50%);
+  fill: var(--blue-200);
   fill-opacity: 0.14;
-  stroke: hsl(from #dcebff h s 50%);
-  stroke-opacity: 0.5;
+  stroke: var(--blue-200);
+  stroke-opacity: 1;
   stroke-width: 1;
   stroke-linejoin: round;
 }
