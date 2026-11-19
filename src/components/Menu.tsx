@@ -66,10 +66,19 @@ function MenuPanel({
       const rect = anchor!.getBoundingClientRect()
       const parentRect = anchor!.closest('[role="menu"]')?.getBoundingClientRect() ?? rect
       const width = menu.offsetWidth
-      const left = parentRect.right + 4 + width <= window.innerWidth
+      const preferredLeft = parentRect.right + 4 + width <= window.innerWidth
         ? parentRect.right + 4 : parentRect.left - width - 4
-      menu.style.left = `${Math.max(8, Math.min(left, window.innerWidth - width - 8))}px`
-      menu.style.top = `${Math.max(8, Math.min(rect.top - 5, window.innerHeight - menu.offsetHeight - 8))}px`
+      const left = Math.max(8, Math.min(preferredLeft, window.innerWidth - width - 8))
+      const top = Math.max(8, Math.min(rect.top - 5, window.innerHeight - menu.offsetHeight - 8))
+      menu.style.left = `${left}px`
+      menu.style.top = `${top}px`
+
+      if (!safeTriangleEnabled) {
+        const [start, end] = left >= rect.right ? [rect.right, left] : [left + width, rect.left]
+        const bottom = Math.min(parentRect.bottom, top + menu.offsetHeight)
+        menu.style.setProperty('--submenu-hover-gap',
+          `${Math.max(parentRect.top, top)}px calc(100% - ${end}px) calc(100% - ${bottom}px) ${start}px`)
+      }
     }
     position()
     window.addEventListener('resize', position)
@@ -79,7 +88,7 @@ function MenuPanel({
       window.removeEventListener('resize', position)
       window.removeEventListener('scroll', position, true)
     }
-  }, [anchor, focusOnOpen])
+  }, [anchor, focusOnOpen, safeTriangleEnabled])
 
   useEffect(() => {
     if (anchor) return
@@ -151,6 +160,7 @@ function MenuPanel({
       role="menu"
       aria-label={label}
       data-safe-triangle-active={safeTriangle.triangle ? '' : undefined}
+      data-hover-gap={anchor && !safeTriangleEnabled ? '' : undefined}
       className={`menu ${anchor ? 'menu--submenu' : ''} ${className}`.trim()}
       onKeyDown={handleKeyDown}
       onBlur={(event) => {

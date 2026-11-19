@@ -69,6 +69,12 @@
   overflow-y: auto;
 }
 
+.menu--submenu[data-hover-gap]::before {
+  content: '';
+  position: fixed;
+  inset: var(--submenu-hover-gap);
+}
+
 .menu-item[aria-expanded='true']:not(:focus-visible):not(:disabled) { background: var(--gray-100); }
 
 .menu-item__icon {
