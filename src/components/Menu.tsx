@@ -201,7 +201,7 @@ function MenuPanel({
               onClose={() => closeSubmenu(true)}
               onCloseAncestors={() => { closeSubmenu(true); onCloseAncestors?.() }}
             />}
-            {isOpen && showSafeTriangle && <SafeTriangleDebug
+            {isOpen && safeTriangleEnabled && showSafeTriangle && <SafeTriangleDebug
               triangle={safeTriangle.triangle}
               anchor={buttonsRef.current.get(itemId)}
               submenuId={submenuId}
